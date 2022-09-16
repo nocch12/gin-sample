@@ -1,8 +1,12 @@
 package main
 
 import (
+	"io"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nocch12/gin-sample/controller"
+	"github.com/nocch12/gin-sample/middlewares"
 	"github.com/nocch12/gin-sample/service"
 )
 
@@ -11,11 +15,22 @@ var (
 	videoController controller.VideoController = controller.New(videoService)
 )
 
+func setUpLogOutput() {
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+}
+
 func main() {
-	server := gin.Default()
+	setUpLogOutput()
+
+	server := gin.New()
+
+	server.Use(gin.Recovery(), middlewares.Logger())
+
 	server.GET("/videos", func(ctx *gin.Context) {
 		ctx.JSON(200, videoController.FindAll())
 	})
+
 	server.POST("/videos", func(ctx *gin.Context) {
 		ctx.JSON(201, videoController.Save(ctx))
 	})
