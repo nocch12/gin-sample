@@ -8,6 +8,7 @@ import (
 	"github.com/nocch12/gin-sample/controller"
 	"github.com/nocch12/gin-sample/middlewares"
 	"github.com/nocch12/gin-sample/service"
+	gindump "github.com/tpkeeper/gin-dump"
 )
 
 var (
@@ -25,7 +26,12 @@ func main() {
 
 	server := gin.New()
 
-	server.Use(gin.Recovery(), middlewares.Logger())
+	server.Use(
+		gin.Recovery(),
+		middlewares.Logger(),
+		middlewares.BasicAuth(),
+		gindump.Dump(),
+	)
 
 	server.GET("/videos", func(ctx *gin.Context) {
 		ctx.JSON(200, videoController.FindAll())

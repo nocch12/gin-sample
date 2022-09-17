@@ -12,7 +12,9 @@ type videoService struct {
 }
 
 func New() VideoService {
-	return &videoService{}
+	return &videoService{
+		videos: make([]entity.Video, 0),
+	}
 }
 
 func (service *videoService) Save(video entity.Video) entity.Video {
